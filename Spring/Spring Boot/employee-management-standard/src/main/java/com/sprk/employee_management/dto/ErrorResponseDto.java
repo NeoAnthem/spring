@@ -7,13 +7,8 @@ import java.time.LocalDateTime;
 
 @Data
 public class ErrorResponseDto<E> {
-
     private HttpStatus status;
-
     private E errorMessage;
-
     private String apiPath;
-
     private LocalDateTime timestamp;
-
 }

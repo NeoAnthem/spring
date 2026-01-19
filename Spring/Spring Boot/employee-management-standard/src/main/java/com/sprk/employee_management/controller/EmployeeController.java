@@ -2,6 +2,7 @@ package com.sprk.employee_management.controller;
 
 import com.sprk.employee_management.constant.EmployeeConstant;
 import com.sprk.employee_management.dto.EmployeeDto;
+import com.sprk.employee_management.dto.EmployeeFileDto;
 import com.sprk.employee_management.dto.ResponseDto;
 import com.sprk.employee_management.dto.SuccessResponseDto;
 import com.sprk.employee_management.entity.EmployeeInfo;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-// base mapping
 @RequestMapping("/api/v1")
 @AllArgsConstructor
 public class EmployeeController {
@@ -23,72 +23,75 @@ public class EmployeeController {
     private final EmployeeService employeeService;
 
     @PostMapping("/employees")
-    public ResponseEntity<ResponseDto<SuccessResponseDto<EmployeeDto>>> saveEmployee(@Valid @RequestBody EmployeeDto employeeDto) {
 
-        System.out.println(employeeDto);
-        EmployeeDto savedEmployeeDto = employeeService.addEmployee(employeeDto);
+    public ResponseEntity<ResponseDto<SuccessResponseDto<EmployeeDto>>> saveEmployee(@Valid @ModelAttribute EmployeeFileDto employeeFileDto){
 
-        ResponseDto<SuccessResponseDto<EmployeeDto>> responseDto = new ResponseDto<>();
+        try {
 
-        SuccessResponseDto<EmployeeDto> successResponseDto = new SuccessResponseDto<>();
-        successResponseDto.setData(savedEmployeeDto);
-        successResponseDto.setMessage(String.format(EmployeeConstant.INSERT_MESSAGE,savedEmployeeDto.getEmpId()));
+        EmployeeDto passedEmployeeDto=employeeService.addEmployee(employeeFileDto);
+
+        ResponseDto<SuccessResponseDto<EmployeeDto>> responseDto=new ResponseDto<>();
+
+        SuccessResponseDto<EmployeeDto> successResponseDto=new SuccessResponseDto<>();
+        successResponseDto.setMessage(String.format(EmployeeConstant.INSERT_MESSAGE,passedEmployeeDto.getEmpId()));
+        successResponseDto.setData(passedEmployeeDto);
         successResponseDto.setStatus(EmployeeConstant.INSERT_STATUS);
-
         responseDto.setResponse(successResponseDto);
 
-
         return ResponseEntity.status(HttpStatus.valueOf(EmployeeConstant.INSERT_STATUS)).body(responseDto);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+
+        }
+        return ResponseEntity.badRequest().build();
     }
-
     @GetMapping("/employees")
-
-    public ResponseEntity<ResponseDto<SuccessResponseDto<List<EmployeeDto>>>> getAllEmployees() {
-
-        ResponseDto<SuccessResponseDto<List<EmployeeDto>>> responseDto = new ResponseDto<>();
-
-        List<EmployeeDto> allEmployeeDtos = employeeService.getAllEmployees();
-        SuccessResponseDto<List<EmployeeDto>> successResponseDto = new SuccessResponseDto<>();
-        successResponseDto.setData(allEmployeeDtos);
+    public ResponseEntity<ResponseDto<SuccessResponseDto<List<EmployeeDto>>>> getallEmployee(){
+        ResponseDto<SuccessResponseDto<List<EmployeeDto>>> responseDto=new ResponseDto<>();
+        List<EmployeeDto> employeeDtoList=employeeService.getallEmployee();
+        SuccessResponseDto<List<EmployeeDto>> successResponseDto=new SuccessResponseDto<>();
+        successResponseDto.setData(employeeDtoList);
         successResponseDto.setStatus(EmployeeConstant.SUCCESS_STATUS);
         successResponseDto.setMessage(EmployeeConstant.FETCH_ALL_MESSAGE);
-
         responseDto.setResponse(successResponseDto);
 
         return ResponseEntity.status(HttpStatus.valueOf(EmployeeConstant.SUCCESS_STATUS)).body(responseDto);
     }
 
-    /*
     @GetMapping("/employees/{empId}")
-    public EmployeeInfo getEmployeeById(@PathVariable int empId) {
-
-        return employeeService.getEmployeeById(empId);
-    }
-
-
-    @DeleteMapping("/employees/{empId}")
-    public String deleteEmployeeById(@PathVariable int empId) {
-
-        boolean result = employeeService.deleteById(empId);
-        if (result) {
-            return String.format("Employee with id = %d deleted successfully", empId);
-        }
-        return String.format("Employee with id = %d could not found!!", empId);
-    }
-     */
-
-    @PutMapping("/employees/{empId}")
-    public ResponseEntity<ResponseDto<SuccessResponseDto<EmployeeDto>>> updateEmployee(@PathVariable("empId") String empIdStr, @RequestBody EmployeeDto updatedEmployeeDto) {
-
-        EmployeeDto newUpdatedEmployeeDto = employeeService.updateEmployee(empIdStr, updatedEmployeeDto);
-
-        ResponseDto<SuccessResponseDto<EmployeeDto>> responseDto = new ResponseDto<>();
-        SuccessResponseDto<EmployeeDto> successResponseDto = new SuccessResponseDto<>();
-        successResponseDto.setData(newUpdatedEmployeeDto);
+    public ResponseEntity<ResponseDto<SuccessResponseDto<EmployeeDto>>> getempBYId(@PathVariable("empId") String empIdStr){
+        EmployeeDto newgetbyId=employeeService.getempBYId(empIdStr);
+        ResponseDto<SuccessResponseDto<EmployeeDto>> responseDto=new ResponseDto<>();
+        SuccessResponseDto<EmployeeDto> successResponseDto=new SuccessResponseDto<>();
+        successResponseDto.setMessage(String.format(EmployeeConstant.FETCH_EMP_MESSAGE));
+        successResponseDto.setData(newgetbyId);
         successResponseDto.setStatus(EmployeeConstant.SUCCESS_STATUS);
-        successResponseDto.setMessage(String.format(EmployeeConstant.EMP_UPDATE_MESSAGE,empIdStr));
         responseDto.setResponse(successResponseDto);
 
+        return ResponseEntity.status(HttpStatus.valueOf(EmployeeConstant.SUCCESS_STATUS)).body(responseDto);
+    }
+
+    @DeleteMapping("/employees/{empId}")
+    public ResponseEntity<ResponseDto<SuccessResponseDto<EmployeeDto>>> deleteById(@PathVariable("empId") String empIdStr){
+        EmployeeDto employeeDto = employeeService.deleteById(empIdStr);
+        ResponseDto<SuccessResponseDto<EmployeeDto>> responseDto=new ResponseDto<>();
+        SuccessResponseDto<EmployeeDto> successResponseDto=new SuccessResponseDto<>();
+        successResponseDto.setStatus(EmployeeConstant.SUCCESS_STATUS);
+        successResponseDto.setData(employeeDto);
+        successResponseDto.setMessage(String.format(EmployeeConstant.EMP_DELETE_MESSAGE,empIdStr));
+        responseDto.setResponse(successResponseDto);
+        return ResponseEntity.status(HttpStatus.valueOf(EmployeeConstant.SUCCESS_STATUS)).body(responseDto);
+    }
+
+    @PutMapping("/employees/{empId}")
+    public ResponseEntity<ResponseDto<SuccessResponseDto<EmployeeDto>>> updateempById(@PathVariable("empId") String empIdStr,@RequestBody EmployeeDto employeeDto){
+        EmployeeDto newUpdateEmployeeDto= employeeService.updateById(empIdStr,employeeDto);
+        ResponseDto<SuccessResponseDto<EmployeeDto>> responseDto=new ResponseDto<>();
+        SuccessResponseDto<EmployeeDto> successResponseDto=new SuccessResponseDto<>();
+        successResponseDto.setMessage(String.format(EmployeeConstant.EMP_UPDATE_MESSAGE,empIdStr));
+        successResponseDto.setData(newUpdateEmployeeDto);
+        successResponseDto.setStatus(EmployeeConstant.SUCCESS_STATUS);
+        responseDto.setResponse(successResponseDto);
         return ResponseEntity.status(HttpStatus.valueOf(EmployeeConstant.SUCCESS_STATUS)).body(responseDto);
     }
 

@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 
 public class PhoneAlreadyExistsException extends EmployeeException{
 
-    public PhoneAlreadyExistsException(String message, HttpStatus status) {
+    public PhoneAlreadyExistsException(String message, HttpStatus status){
         super(status,message);
     }
 }

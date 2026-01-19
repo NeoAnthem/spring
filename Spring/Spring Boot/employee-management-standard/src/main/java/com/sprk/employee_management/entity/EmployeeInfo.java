@@ -12,18 +12,19 @@ public class EmployeeInfo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(unique = true)
     private Long empId;
 
-    @Column( nullable = false)
+    @Column(nullable = false)
     private String firstName;
 
-    @Column( nullable = false)
+    @Column(nullable = false)
     private String lastName;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true,nullable = false)
     private String email;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true,nullable = false)
     private String phone;
 
     private String gender;
@@ -34,8 +35,16 @@ public class EmployeeInfo {
     @Column(nullable = false)
     private double salary;
 
+
     @Column(nullable = false)
     private String department;
+
+    @Column(nullable = false)
+    private String fileName;
+
+
+    @Column(nullable = false)
+    private  String filePath;
 
 
 }

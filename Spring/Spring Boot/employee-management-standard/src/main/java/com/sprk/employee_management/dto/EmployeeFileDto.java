@@ -1,17 +1,19 @@
 package com.sprk.employee_management.dto;
 
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
-public class EmployeeDto {
+public class EmployeeFileDto {
 
-    private Long empId;
+//    private Long empId;
 
     @NotBlank(message = "First Name cannot be empty")
     private String firstName;
@@ -41,7 +43,11 @@ public class EmployeeDto {
     @NotBlank(message = "Department cannot be empty")
     private String department;
 
-    private String fileName;
+//    private String fileName;
+
+    @NotNull(message = "File cannot be empty")
+    private MultipartFile file;
+
 
 
 

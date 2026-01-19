@@ -2,7 +2,9 @@ package com.sprk.employee_management.controller.advice;
 
 import com.sprk.employee_management.dto.ErrorResponseDto;
 import com.sprk.employee_management.dto.ResponseDto;
+import com.sprk.employee_management.entity.EmployeeInfo;
 import com.sprk.employee_management.exception.EmployeeException;
+import lombok.Data;
 import org.jspecify.annotations.Nullable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -25,61 +27,55 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class EmployeeAdvice extends ResponseEntityExceptionHandler {
-    private final View error;
 
-    public EmployeeAdvice(View error) {
-        this.error = error;
+    private final View error;
+    public EmployeeAdvice(View error){
+        this.error=error;
     }
 
     @Override
     protected @Nullable ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-        Map<String,String> validationErrors = new HashMap<>();
-
+        Map<String,String> validerrorMessage=new HashMap<>();
         BindingResult bindingResult = ex.getBindingResult();
-
         List<ObjectError> allErrors = bindingResult.getAllErrors();
 
-        for (ObjectError objectError : allErrors) {
-            FieldError fieldError = (FieldError) objectError;
-            String fieldName = fieldError.getField();
-            String errorMessage = objectError.getDefaultMessage();
-            validationErrors.put(fieldName, errorMessage);
+        for (ObjectError objectError:allErrors){
+            FieldError fieldError=(FieldError) objectError;
+            String fieldName=fieldError.getField();
+            String errorMessage=objectError.getDefaultMessage();
+            validerrorMessage.put(fieldName,errorMessage);
         }
 
         // Creating Our ResponseDto Object
-        ResponseDto<ErrorResponseDto<Map<String,String>>> responseDto = new ResponseDto<>();
+        ResponseDto<ErrorResponseDto<Map<String,String>>> responseDto=new ResponseDto<>();
+
 
         // Since Response Dto will accept Object of ErrorResponseDto so creating Object
-        ErrorResponseDto<Map<String,String>> errorResponseDto = new ErrorResponseDto<>();
+        ErrorResponseDto<Map<String,String>> errorResponseDto=new ErrorResponseDto<>();
 
-        // Filling all the values of ErrorResponseDto Object
-        errorResponseDto.setTimestamp(LocalDateTime.now());
+        errorResponseDto.setErrorMessage(validerrorMessage);
         errorResponseDto.setStatus(HttpStatus.valueOf(status.value()));
+        errorResponseDto.setTimestamp(LocalDateTime.now());
         errorResponseDto.setApiPath(request.getDescription(true));
-        errorResponseDto.setErrorMessage(validationErrors);
 
-        // Adding filled errorResponseDto Object to our ResponseDto Object
         responseDto.setResponse(errorResponseDto);
 
-
-        // Finally returning ResponseEntity Object with our filled ResponseDto Object
         return ResponseEntity.status(status).body(responseDto);
+//        return super.handleMethodArgumentNotValid(ex, headers, status, request);
     }
 
+
     @ExceptionHandler(EmployeeException.class)
-    public ResponseEntity<ResponseDto<ErrorResponseDto<String>>> handleEmployeeException(EmployeeException ex, WebRequest request) {
-
-        ResponseDto<ErrorResponseDto<String>> responseDto = new ResponseDto<>();
-
-        ErrorResponseDto<String> errorResponseDto = new ErrorResponseDto<>();
-        errorResponseDto.setTimestamp(LocalDateTime.now());
-        errorResponseDto.setStatus(ex.getStatus());
-        errorResponseDto.setApiPath(request.getDescription(false));
+    public ResponseEntity<ResponseDto<ErrorResponseDto<String>>> handleEmployeeException(EmployeeException ex,WebRequest request){
+        ResponseDto<ErrorResponseDto<String>> responseDto=new ResponseDto<>();
+        ErrorResponseDto<String> errorResponseDto=new ErrorResponseDto<>();
         errorResponseDto.setErrorMessage(ex.getMessage());
+        errorResponseDto.setStatus(ex.getStatus());
+        errorResponseDto.setTimestamp(LocalDateTime.now());
+        errorResponseDto.setApiPath(request.getDescription(false));
 
         responseDto.setResponse(errorResponseDto);
 
         return ResponseEntity.status(ex.getStatus()).body(responseDto);
-
     }
 }

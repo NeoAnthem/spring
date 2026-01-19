@@ -1,19 +1,22 @@
 package com.sprk.employee_management.service;
 
-
 import com.sprk.employee_management.dto.EmployeeDto;
+import com.sprk.employee_management.dto.EmployeeFileDto;
 import com.sprk.employee_management.entity.EmployeeInfo;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface EmployeeService {
-    EmployeeDto addEmployee(EmployeeDto employeeDto);
+    EmployeeDto addEmployee(EmployeeFileDto employeeFileDto)throws IOException;
 
-    List<EmployeeDto> getAllEmployees();
+//    List<EmployeeInfo> getallEmployeeBy();
 
-//    EmployeeInfo getEmployeeById(int empId);
+    List<EmployeeDto> getallEmployee();
 //
-//    boolean deleteById(int empId);
-
-    EmployeeDto updateEmployee(String empIdStr, EmployeeDto updatedEmployeeDto);
+    EmployeeDto getempBYId(String empIdStr);
+//
+    EmployeeDto deleteById(String empIdStr);
+//
+    EmployeeDto updateById(String empIdStr, EmployeeDto updatedemployeeDto);
 }

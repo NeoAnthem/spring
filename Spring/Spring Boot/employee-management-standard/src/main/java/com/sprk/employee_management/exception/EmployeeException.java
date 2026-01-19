@@ -4,12 +4,11 @@ import lombok.Data;
 import org.springframework.http.HttpStatus;
 
 @Data
-public class EmployeeException extends RuntimeException {
-
+public class EmployeeException extends RuntimeException{
     private HttpStatus status;
 
-    public EmployeeException(HttpStatus status, String message) {
+    public EmployeeException(HttpStatus status,String message){
         super(message);
-        this.status = status;
+        this.status=status;
     }
 }
