@@ -12,4 +12,5 @@ public interface EmployeeMapper {
     EmployeeInfo mapEmployeeDtotoEmployeeInfo(EmployeeDto employeeDto);
     EmployeeInfo mapEmployeeDtotoEmployeeFileDto(EmployeeFileDto employeeFileDto);
     EmployeeFileDto mapEmployeeFileDtotoEmployeeDto(EmployeeInfo employeeInfo);
+    EmployeeInfo mapEmployeeFileDtotoEmployeeInfo(EmployeeFileDto employeeFileDto);
 }

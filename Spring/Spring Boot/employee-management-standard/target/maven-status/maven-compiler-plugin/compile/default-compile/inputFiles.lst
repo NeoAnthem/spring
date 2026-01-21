@@ -3,6 +3,7 @@ D:\Software Development\Spring\Spring Boot\employee-management-standard\src\main
 D:\Software Development\Spring\Spring Boot\employee-management-standard\src\main\java\com\sprk\employee_management\controller\EmployeeController.java
 D:\Software Development\Spring\Spring Boot\employee-management-standard\src\main\java\com\sprk\employee_management\controller\FileController.java
 D:\Software Development\Spring\Spring Boot\employee-management-standard\src\main\java\com\sprk\employee_management\dto\EmployeeDto.java
+D:\Software Development\Spring\Spring Boot\employee-management-standard\src\main\java\com\sprk\employee_management\dto\EmployeeFileDto.java
 D:\Software Development\Spring\Spring Boot\employee-management-standard\src\main\java\com\sprk\employee_management\dto\ErrorResponseDto.java
 D:\Software Development\Spring\Spring Boot\employee-management-standard\src\main\java\com\sprk\employee_management\dto\ResponseDto.java
 D:\Software Development\Spring\Spring Boot\employee-management-standard\src\main\java\com\sprk\employee_management\dto\SuccessResponseDto.java
@@ -11,6 +12,7 @@ D:\Software Development\Spring\Spring Boot\employee-management-standard\src\main
 D:\Software Development\Spring\Spring Boot\employee-management-standard\src\main\java\com\sprk\employee_management\exception\EmailAlreadyExistsException.java
 D:\Software Development\Spring\Spring Boot\employee-management-standard\src\main\java\com\sprk\employee_management\exception\EmployeeException.java
 D:\Software Development\Spring\Spring Boot\employee-management-standard\src\main\java\com\sprk\employee_management\exception\EmployeeIdInvalidException.java
+D:\Software Development\Spring\Spring Boot\employee-management-standard\src\main\java\com\sprk\employee_management\exception\EmployeeInvalidException.java
 D:\Software Development\Spring\Spring Boot\employee-management-standard\src\main\java\com\sprk\employee_management\exception\EmployeeNotFoundException.java
 D:\Software Development\Spring\Spring Boot\employee-management-standard\src\main\java\com\sprk\employee_management\exception\PhoneAlreadyExistsException.java
 D:\Software Development\Spring\Spring Boot\employee-management-standard\src\main\java\com\sprk\employee_management\mapper\EmployeeMapper.java

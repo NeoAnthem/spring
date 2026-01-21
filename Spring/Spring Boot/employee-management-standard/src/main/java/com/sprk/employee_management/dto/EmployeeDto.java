@@ -43,6 +43,8 @@ public class EmployeeDto {
 
     private String fileName;
 
+    private String filePath;
+
 
 
 }

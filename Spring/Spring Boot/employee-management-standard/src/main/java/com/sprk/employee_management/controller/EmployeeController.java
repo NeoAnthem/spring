@@ -9,10 +9,16 @@ import com.sprk.employee_management.entity.EmployeeInfo;
 import com.sprk.employee_management.service.EmployeeService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 @RestController
@@ -28,17 +34,17 @@ public class EmployeeController {
 
         try {
 
-        EmployeeDto passedEmployeeDto=employeeService.addEmployee(employeeFileDto);
+            EmployeeDto passedEmployeeDto=employeeService.addEmployee(employeeFileDto);
 
-        ResponseDto<SuccessResponseDto<EmployeeDto>> responseDto=new ResponseDto<>();
+            ResponseDto<SuccessResponseDto<EmployeeDto>> responseDto=new ResponseDto<>();
 
-        SuccessResponseDto<EmployeeDto> successResponseDto=new SuccessResponseDto<>();
-        successResponseDto.setMessage(String.format(EmployeeConstant.INSERT_MESSAGE,passedEmployeeDto.getEmpId()));
-        successResponseDto.setData(passedEmployeeDto);
-        successResponseDto.setStatus(EmployeeConstant.INSERT_STATUS);
-        responseDto.setResponse(successResponseDto);
+            SuccessResponseDto<EmployeeDto> successResponseDto=new SuccessResponseDto<>();
+            successResponseDto.setMessage(String.format(EmployeeConstant.INSERT_MESSAGE,passedEmployeeDto.getEmpId()));
+            successResponseDto.setData(passedEmployeeDto);
+            successResponseDto.setStatus(EmployeeConstant.INSERT_STATUS);
+            responseDto.setResponse(successResponseDto);
 
-        return ResponseEntity.status(HttpStatus.valueOf(EmployeeConstant.INSERT_STATUS)).body(responseDto);
+            return ResponseEntity.status(HttpStatus.valueOf(EmployeeConstant.INSERT_STATUS)).body(responseDto);
         } catch (Exception e) {
             System.out.println(e.getMessage());
 
@@ -58,19 +64,33 @@ public class EmployeeController {
         return ResponseEntity.status(HttpStatus.valueOf(EmployeeConstant.SUCCESS_STATUS)).body(responseDto);
     }
 
+
     @GetMapping("/employees/{empId}")
     public ResponseEntity<ResponseDto<SuccessResponseDto<EmployeeDto>>> getempBYId(@PathVariable("empId") String empIdStr){
-        EmployeeDto newgetbyId=employeeService.getempBYId(empIdStr);
-        ResponseDto<SuccessResponseDto<EmployeeDto>> responseDto=new ResponseDto<>();
-        SuccessResponseDto<EmployeeDto> successResponseDto=new SuccessResponseDto<>();
+
+        EmployeeDto newgetbyId = employeeService.getempBYId(empIdStr);
+        ResponseDto<SuccessResponseDto<EmployeeDto>> responseDto = new ResponseDto<>();
+        SuccessResponseDto<EmployeeDto> successResponseDto = new SuccessResponseDto<>();
         successResponseDto.setMessage(String.format(EmployeeConstant.FETCH_EMP_MESSAGE));
         successResponseDto.setData(newgetbyId);
         successResponseDto.setStatus(EmployeeConstant.SUCCESS_STATUS);
         responseDto.setResponse(successResponseDto);
 
         return ResponseEntity.status(HttpStatus.valueOf(EmployeeConstant.SUCCESS_STATUS)).body(responseDto);
+
     }
 
+    @GetMapping("/download/{empId}")
+    public ResponseEntity<Resource> getempByfileName(@PathVariable("empId") String empIdStr){
+        try {
+            Resource newFile=employeeService.getempByfileName(empIdStr);
+
+            return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,"attachment; filename=\""+newFile.getFilename()+"\"").body(newFile);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return ResponseEntity.badRequest().build();
+    }
     @DeleteMapping("/employees/{empId}")
     public ResponseEntity<ResponseDto<SuccessResponseDto<EmployeeDto>>> deleteById(@PathVariable("empId") String empIdStr){
         EmployeeDto employeeDto = employeeService.deleteById(empIdStr);
@@ -93,6 +113,18 @@ public class EmployeeController {
         successResponseDto.setStatus(EmployeeConstant.SUCCESS_STATUS);
         responseDto.setResponse(successResponseDto);
         return ResponseEntity.status(HttpStatus.valueOf(EmployeeConstant.SUCCESS_STATUS)).body(responseDto);
+    }
+    @GetMapping("/employees/download/{empId}")
+    public ResponseEntity<Resource> downloadById(@PathVariable("empId") String empIdStr) throws IOException {
+        EmployeeDto newGetById=employeeService.getempBYId(empIdStr);
+        String path = newGetById.getFilePath();
+        String fileName = newGetById.getFileName();
+        Path path1 = Paths.get(path);
+        Resource resource = new UrlResource(path1.toUri());
+        if (!resource.exists()){
+            ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,"attachment; filename=\""+fileName+"\"").body(resource);
     }
 
 }

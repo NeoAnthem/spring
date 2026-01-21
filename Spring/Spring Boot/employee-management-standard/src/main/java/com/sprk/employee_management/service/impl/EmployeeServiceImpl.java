@@ -14,13 +14,20 @@ import com.sprk.employee_management.service.EmployeeService;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 @Service
@@ -49,7 +56,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 //        employeeDto.setEmpId(null);
 
-        EmployeeInfo employeeInfo = employeeMapper.mapEmployeeDtotoEmployeeFileDto(employeeFileDto);
+        EmployeeInfo employeeInfo = employeeMapper.mapEmployeeFileDtotoEmployeeInfo(employeeFileDto);
         employeeInfo.setFileName(fileName);
         employeeInfo.setFilePath(uploadDirectory+"/"+fileName);
 
@@ -83,14 +90,22 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
         Long empId = Long.parseLong(empIdStr);
 
+
+
+
         EmployeeInfo exitstingEmployeeInfo = employeeRepository.findById(empId)
                 .orElseThrow(() ->
                         new EmployeeNotFoundException(
                                 String.format(EmployeeConstant.EMP_NOT_FOUND, empIdStr)
                                 , HttpStatus.valueOf(EmployeeConstant.BAD_REQUEST_STATUS)
                         ));
+        //  Path path = Paths.get(exitstingEmployeeInfo.getFilePath());
+//        Resource resource = new UrlResource(path.toUri());
+//        if (!resource.exists()) {
+//            ResponseEntity.notFound().build();
+//        }
         return employeeMapper.mapEmployeeInfotoEmployeeDto(exitstingEmployeeInfo);
-
+//return resource;
     }
 
     @Override
@@ -138,17 +153,49 @@ public class EmployeeServiceImpl implements EmployeeService {
             );
         }
 
-            if (employeeRepository.existsByPhoneAndEmpIdNot(updatedemployeeDto.getPhone(), empId)) {
-                throw new PhoneAlreadyExistsException(
-                        String.format(EmployeeConstant.PHONE_ALREADY_TAKEN, updatedemployeeDto.getPhone()),
-                        HttpStatus.valueOf(EmployeeConstant.BAD_REQUEST_STATUS)
-                );
+        if (employeeRepository.existsByPhoneAndEmpIdNot(updatedemployeeDto.getPhone(), empId)) {
+            throw new PhoneAlreadyExistsException(
+                    String.format(EmployeeConstant.PHONE_ALREADY_TAKEN, updatedemployeeDto.getPhone()),
+                    HttpStatus.valueOf(EmployeeConstant.BAD_REQUEST_STATUS)
+            );
 
-            }
-            EmployeeInfo updatedEmployeeInfo=employeeMapper.mapEmployeeDtotoEmployeeInfo(updatedemployeeDto);
-            updatedEmployeeInfo.setEmpId(empId);
-            EmployeeInfo newUpdatedEmployee=employeeRepository.save(updatedEmployeeInfo);
+        }
+        EmployeeInfo updatedEmployeeInfo=employeeMapper.mapEmployeeDtotoEmployeeInfo(updatedemployeeDto);
+        updatedEmployeeInfo.setEmpId(empId);
+        EmployeeInfo newUpdatedEmployee=employeeRepository.save(updatedEmployeeInfo);
 
         return employeeMapper.mapEmployeeInfotoEmployeeDto(newUpdatedEmployee);
+    }
+
+    @Override
+    public Resource getempByfileName(String empIdStr)throws IOException {
+        if (!Pattern.matches("^\\d+$", empIdStr)) {
+            throw new EmployeeInvalidException(
+                    String.format(EmployeeConstant.EMP_ID_INVALID, empIdStr),
+                    HttpStatus.valueOf(EmployeeConstant.BAD_REQUEST_STATUS)
+            );
+        }
+        Long empId = Long.parseLong(empIdStr);
+
+
+
+
+        EmployeeInfo exitstingEmployeeInfo = employeeRepository.findById(empId)
+                .orElseThrow(() ->
+                        new EmployeeNotFoundException(
+                                String.format(EmployeeConstant.EMP_NOT_FOUND, empIdStr)
+                                , HttpStatus.valueOf(EmployeeConstant.BAD_REQUEST_STATUS)
+                        ));
+
+        String path1=exitstingEmployeeInfo.getFilePath();
+
+        // Optional<EmployeeInfo> employeeInfo=employeeRepository.findByFileName(fileName);
+        Path path = Paths.get(path1);
+        Resource resource = new UrlResource(path.toUri());
+        if (!resource.exists()) {
+            ResponseEntity.notFound().build();
+        }
+        return resource;
+
     }
 }
