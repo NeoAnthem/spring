@@ -1,6 +1,7 @@
 package com.sprk.employee_management.service.impl;
 
 import com.sprk.employee_management.constant.EmployeeConstant;
+import com.sprk.employee_management.controller.EmployeeController;
 import com.sprk.employee_management.dto.EmployeeDto;
 import com.sprk.employee_management.dto.EmployeeFileDto;
 import com.sprk.employee_management.entity.EmployeeInfo;
@@ -13,6 +14,8 @@ import com.sprk.employee_management.repository.EmployeeRepository;
 import com.sprk.employee_management.service.EmployeeService;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -30,22 +33,26 @@ import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Service
 @RequiredArgsConstructor
 public class EmployeeServiceImpl implements EmployeeService {
     private final EmployeeRepository employeeRepository;
     private final EmployeeMapper employeeMapper;
+    private static final Logger logger = LoggerFactory.getLogger(EmployeeServiceImpl.class);
     @Value("${file.upload-dir}")
     private  String uploadDirectory;
     @Override
     @Transactional
     public EmployeeDto addEmployee(EmployeeFileDto employeeFileDto)throws IOException {
-
+        logger.info("Adding employee with email : {}", employeeFileDto.getEmail());
         //already exits email and phone
         if (employeeRepository.existsByEmail(employeeFileDto.getEmail())) {
+            logger.error("Could not add employee due to matching email ID");
             throw new EmailAlreadyExistsException(String.format(EmployeeConstant.EMAIL_ALREADY_TAKEN, employeeFileDto.getEmail()), HttpStatus.valueOf(EmployeeConstant.BAD_REQUEST_STATUS));
         }
-
 
         if (employeeRepository.existsByPhone(employeeFileDto.getPhone())) {
             throw new PhoneAlreadyExistsException(String.format(EmployeeConstant.PHONE_ALREADY_TAKEN, employeeFileDto.getPhone()), HttpStatus.valueOf(EmployeeConstant.BAD_REQUEST_STATUS));

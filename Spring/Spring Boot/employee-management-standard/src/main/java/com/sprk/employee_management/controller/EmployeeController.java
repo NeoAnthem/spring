@@ -9,6 +9,7 @@ import com.sprk.employee_management.entity.EmployeeInfo;
 import com.sprk.employee_management.service.EmployeeService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
@@ -21,12 +22,16 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @RestController
 @RequestMapping("/api/v1")
 @AllArgsConstructor
 public class EmployeeController {
 
     private final EmployeeService employeeService;
+    private static final Logger logger = LoggerFactory.getLogger(EmployeeController.class);
 
     @PostMapping("/employees")
 
@@ -126,5 +131,11 @@ public class EmployeeController {
         }
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,"attachment; filename=\""+fileName+"\"").body(resource);
     }
-
+    @GetMapping("/employees/hello")
+    public String hello(){
+        logger.info("Hello Api called");
+        logger.debug("This is debug message");
+        System.out.println("This is print statement");
+        return "hello logging";
+    }
 }
