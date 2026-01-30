@@ -9,29 +9,25 @@ import com.sprk.employee_management.entity.EmployeeInfo;
 import com.sprk.employee_management.service.EmployeeService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.XSlf4j;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/public")
 @AllArgsConstructor
 public class EmployeeController {
 
     private final EmployeeService employeeService;
-    private static final Logger logger = LoggerFactory.getLogger(EmployeeController.class);
+    private static final Logger logger=LoggerFactory.getLogger(EmployeeController.class);
+
 
     @PostMapping("/employees")
 
@@ -119,23 +115,19 @@ public class EmployeeController {
         responseDto.setResponse(successResponseDto);
         return ResponseEntity.status(HttpStatus.valueOf(EmployeeConstant.SUCCESS_STATUS)).body(responseDto);
     }
-    @GetMapping("/employees/download/{empId}")
-    public ResponseEntity<Resource> downloadById(@PathVariable("empId") String empIdStr) throws IOException {
-        EmployeeDto newGetById=employeeService.getempBYId(empIdStr);
-        String path = newGetById.getFilePath();
-        String fileName = newGetById.getFileName();
-        Path path1 = Paths.get(path);
-        Resource resource = new UrlResource(path1.toUri());
-        if (!resource.exists()){
-            ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,"attachment; filename=\""+fileName+"\"").body(resource);
-    }
-    @GetMapping("/employees/hello")
+
+    @GetMapping("/security/hello")
     public String hello(){
-        logger.info("Hello Api called");
-        logger.debug("This is debug message");
-        System.out.println("This is print statement");
-        return "hello logging";
+        logger.info("Hello api called");
+        logger.debug("This is debug msg");
+        System.out.println("hello login");
+        return "Hello login";
+    }
+    @GetMapping("/security/hi")
+    public String hi(){
+        logger.info("Hi api called");
+        logger.debug("This is debug msg");
+        System.out.println("hi login");
+        return "Hi login";
     }
 }
