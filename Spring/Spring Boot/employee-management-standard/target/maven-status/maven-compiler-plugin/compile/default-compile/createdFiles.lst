@@ -11,6 +11,7 @@ com\sprk\employee_management\exception\EmailAlreadyExistsException.class
 com\sprk\employee_management\dto\EmployeeFileDto.class
 com\sprk\employee_management\controller\FileController.class
 com\sprk\employee_management\dto\ResponseDto.class
+com\sprk\employee_management\config\UserDetailsService.class
 com\sprk\employee_management\controller\advice\EmployeeAdvice.class
 com\sprk\employee_management\dto\ErrorResponseDto.class
 com\sprk\employee_management\entity\EmployeeInfo$EmployeeInfoBuilder.class
@@ -21,5 +22,6 @@ com\sprk\employee_management\controller\EmployeeController.class
 com\sprk\employee_management\exception\EmployeeIdInvalidException.class
 com\sprk\employee_management\exception\EmployeeNotFoundException.class
 com\sprk\employee_management\constant\EmployeeConstant.class
+com\sprk\employee_management\config\SecurityConfig.class
 com\sprk\employee_management\mapper\EmployeeMapper.class
 com\sprk\employee_management\exception\EmployeeInvalidException.class
